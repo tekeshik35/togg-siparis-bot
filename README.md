@@ -1,6 +1,6 @@
 # Togg Sipariş Botu
 
-Togg'un ana sayfasını, T10F ve T10X sayfalarını 30 dakikada bir gerçek bir tarayıcıyla açar. "Sipariş Ver" butonu görünürse Telegram'dan mesaj atar. Buton yoksa sessiz kalır.
+Togg'un ana sayfasını, T10F ve T10X sayfalarını 10 dakikada bir gerçek bir tarayıcıyla açar. "Sipariş Ver" butonu görünürse Telegram'dan mesaj atar. Buton yoksa sessiz kalır.
 
 ## Kurulum (bir kerelik)
 
@@ -15,7 +15,7 @@ Chat ID'yi ayrıca girmenize gerek yok, bot `/start` mesajınızdan kendisi bulu
 
 ## Notlar
 
-- Sipariş açık kaldığı sürece her 30 dakikada bir tekrar mesaj gelir. Siparişi verince ya da gerek kalmayınca **Actions → Togg sipariş kontrolü → ⋯ → Disable workflow** ile durdurun.
+- Sipariş açık kaldığı sürece her 10 dakikada bir tekrar mesaj gelir. Siparişi verince ya da gerek kalmayınca **Actions → Togg sipariş kontrolü → ⋯ → Disable workflow** ile durdurun.
 - GitHub zamanlanmış işleri birkaç dakika geciktirebilir.
 - Repoda 60 gün hiç değişiklik olmazsa GitHub zamanlamayı kendiliğinden durdurur. Gerekirse Actions sekmesinden tekrar açılır.
 - Token koda yazılmaz, sadece GitHub Secrets'ta durur.

@@ -79,8 +79,12 @@ def telegram(method, params=None):
         return json.loads(r.read().decode())
 
 
+# Yusuf'un Telegram sohbet ID'si (token olmadan tek başına bir işe yaramaz)
+DEFAULT_CHAT_ID = "879287249"
+
+
 def get_chat_id():
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip() or DEFAULT_CHAT_ID
     if chat_id:
         return chat_id
     updates = telegram("getUpdates").get("result", [])

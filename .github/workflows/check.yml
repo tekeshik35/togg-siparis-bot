@@ -2,8 +2,8 @@ name: Togg sipariş kontrolü
 
 on:
   schedule:
-    # Her 30 dakikada bir (GitHub zamanlamayı birkaç dakika geciktirebilir)
-    - cron: "*/30 * * * *"
+    # Her 10 dakikada bir (GitHub zamanlamayı birkaç dakika geciktirebilir)
+    - cron: "*/10 * * * *"
   workflow_dispatch:
     inputs:
       test_message:
