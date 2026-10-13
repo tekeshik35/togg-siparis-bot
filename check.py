@@ -74,6 +74,26 @@ FIND_JS = r"""
       visible: cs.display !== 'none' && cs.visibility !== 'hidden',
     });
   }
+  // Yazısı birden fazla parçaya bölünmüş butonlar/linkler için bütün metni de kontrol et
+  // (ör. <a><span>Siparişinizi</span> <span>Oluşturun</span></a>)
+  for (const el of document.querySelectorAll('a, button, [role="button"]')) {
+    const full = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!full || full.length > 150) continue;
+    const low = full.toLocaleLowerCase('tr-TR');
+    if (!orderRe.test(low) || ignoreRe.test(low)) continue;
+    const link = el.closest('a');
+    const href = link ? link.href : '';
+    if (hits.some(h => low.includes(h.text.toLocaleLowerCase('tr-TR')) && h.href === href)) continue;
+    const key = full + '|' + href;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const cs = getComputedStyle(el);
+    hits.push({
+      text: full.slice(0, 120),
+      href: href,
+      visible: cs.display !== 'none' && cs.visibility !== 'hidden',
+    });
+  }
   return hits;
 }
 """
