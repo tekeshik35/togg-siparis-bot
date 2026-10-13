@@ -1,0 +1,40 @@
+name: Togg sipariş kontrolü
+
+on:
+  schedule:
+    # Her 30 dakikada bir (GitHub zamanlamayı birkaç dakika geciktirebilir)
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      test_message:
+        description: "Deneme mesajı gönderilsin mi?"
+        type: boolean
+        default: true
+
+concurrency:
+  group: togg-check
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Bağımlılıkları kur
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Togg sayfalarını kontrol et
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TEST_MESSAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_message && '1' || '0' }}
+        run: python check.py
