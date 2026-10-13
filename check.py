@@ -30,21 +30,28 @@ PAGES = [
     ("T10X sayfası", "https://www.togg.com.tr/t10x"),
 ]
 
-# Sipariş açıldığında çıkan buton metinleri
+# Sipariş açıldığında çıkabilecek buton metinleri. Metin önce Türkçe kurallarıyla
+# küçük harfe çevrilir (SİPARİŞ -> sipariş), sonra bu kalıplarla aranır. Örnekler:
+# "Sipariş Ver", "Siparişinizi Oluşturun", "Sipariş Oluştur", "Ön Sipariş Ver",
+# "Siparişi Tamamla", "Hemen Sipariş", "Siparişe Açık", "Satın Al", "Şimdi Al"
+_TR = "a-zçğıöşü"
 ORDER_RE = re.compile(
-    r"sipari[şs]\s*ver|sipari[şs]ini(z)?\s*(olu[şs]tur|ver)|hemen\s+sipari[şs]",
-    re.IGNORECASE,
+    rf"sipari[şs][{_TR}]*\s+(ver|olu[şs]tur|tamamla|ba[şs]lat|yap)"
+    rf"|hemen\s+sipari[şs]"
+    rf"|sipari[şs]e\s+(a[çc][ıi]k|a[çc][ıi]ld|ba[şs]la)"
+    rf"|sat[ıi]n\s+al(?![{_TR}])"
+    rf"|[şs]imdi\s+al(?![{_TR}])"
 )
 # Her zaman sayfada olan, sipariş açılışıyla ilgisi olmayan metinler
-IGNORE_RE = re.compile(r"sipari[şs]\s*ve\s*bilgi", re.IGNORECASE)
+IGNORE_RE = re.compile(r"sipari[şs]\s*ve\s*bilgi")
 
 TR_TZ = timezone(timedelta(hours=3))
 
 # Sayfadaki tüm elemanlarda (gizli olanlar dahil) sipariş metni arar
 FIND_JS = r"""
 (patterns) => {
-  const orderRe = new RegExp(patterns.order, 'i');
-  const ignoreRe = new RegExp(patterns.ignore, 'i');
+  const orderRe = new RegExp(patterns.order);
+  const ignoreRe = new RegExp(patterns.ignore);
   const hits = [];
   const seen = new Set();
   for (const el of document.querySelectorAll('body *')) {
@@ -53,7 +60,8 @@ FIND_JS = r"""
     const own = [...el.childNodes]
       .filter(n => n.nodeType === 3)
       .map(n => n.textContent).join(' ').replace(/\s+/g, ' ').trim();
-    if (!own || !orderRe.test(own) || ignoreRe.test(own)) continue;
+    const low = own.toLocaleLowerCase('tr-TR');
+    if (!own || !orderRe.test(low) || ignoreRe.test(low)) continue;
     const link = el.closest('a');
     const href = link ? link.href : '';
     const key = own + '|' + href;
