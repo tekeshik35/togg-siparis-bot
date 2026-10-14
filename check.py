@@ -177,6 +177,76 @@ def check_pages():
     return results, errors
 
 
+REPORT_HOUR = 21  # Günlük rapor saati (Türkiye saati)
+
+
+def github_runs_last_24h():
+    """Son 24 saatteki çalışmaları GitHub'dan çeker (açık repo, sadece okuma)."""
+    repo = os.environ.get("GITHUB_REPOSITORY", "tekeshik35/togg-siparis-bot")
+    token = os.environ.get("GITHUB_TOKEN", "").strip()
+    since = datetime.now(timezone.utc) - timedelta(hours=24)
+    runs, page = [], 1
+    while page <= 5:
+        url = (
+            f"https://api.github.com/repos/{repo}/actions/runs"
+            f"?per_page=100&page={page}&created=%3E%3D{since.strftime('%Y-%m-%dT%H:%M:%SZ')}"
+        )
+        req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json"})
+        if token:
+            req.add_header("Authorization", f"Bearer {token}")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            batch = json.loads(r.read().decode()).get("workflow_runs", [])
+        runs += batch
+        if len(batch) < 100:
+            break
+        page += 1
+    return runs
+
+
+def build_report(this_run_ok, this_run_errors):
+    runs = github_runs_last_24h()
+    current_id = os.environ.get("GITHUB_RUN_ID", "")
+    done = [r for r in runs if r.get("status") == "completed" and str(r.get("id")) != current_id]
+    ok = sum(1 for r in done if r.get("conclusion") == "success")
+    failed = sum(1 for r in done if r.get("conclusion") == "failure")
+    other = len(done) - ok - failed
+    # Bu çalışmanın kendisini de say
+    total = len(done) + 1
+    ok += 1 if this_run_ok else 0
+    failed += 0 if this_run_ok else 1
+
+    expected = 24 * 6  # 10 dakikada bir
+    now = datetime.now(TR_TZ).strftime("%d.%m.%Y %H:%M")
+    lines = [
+        f"📊 Togg botu günlük rapor ({now})",
+        "",
+        f"Son 24 saatte {total} kontrol yapıldı (beklenen ~{expected}).",
+        f"✅ Sorunsuz: {ok}",
+        f"❌ Hatalı (siteye ulaşılamadı): {failed}",
+    ]
+    if other:
+        lines.append(f"⏹ İptal/diğer: {other}")
+    lines.append("Sipariş butonu: görülmedi" if not this_run_errors else
+                 f"Son kontrolde uyarı: {len(this_run_errors)} sayfa açılamadı")
+    if total < expected * 0.7:
+        lines += ["", "⚠️ Kontrol sayısı beklenenden az. cron-job.org görevinin açık olduğunu kontrol edin."]
+    if failed > total * 0.2:
+        lines += ["", "⚠️ Hata oranı yüksek. Site bota erişimi engelliyor olabilir."]
+    lines += ["", "Rapor her akşam 21:00'de gelir. Gelmediği gün bot durmuş olabilir."]
+    return "\n".join(lines)
+
+
+def should_send_report():
+    if os.environ.get("REPORT_NOW") == "1":
+        return True
+    # Sadece cron-job.org tetiklemesinde (workflow_dispatch) ve 21:00-21:09 arasında
+    # gönder; GitHub'ın yedek zamanlaması rapor göndermez, böylece rapor tek gelir.
+    if os.environ.get("GITHUB_EVENT_NAME") != "workflow_dispatch":
+        return False
+    t = datetime.now(TR_TZ)
+    return t.hour == REPORT_HOUR and t.minute < 10
+
+
 def main():
     now = datetime.now(TR_TZ).strftime("%d.%m.%Y %H:%M")
 
@@ -184,6 +254,12 @@ def main():
         send(f"✅ Togg sipariş botu çalışıyor. Deneme mesajı ({now}).")
 
     results, errors = check_pages()
+
+    if should_send_report():
+        try:
+            send(build_report(len(errors) < len(PAGES), errors))
+        except Exception as e:
+            print(f"Rapor gönderilemedi: {e}")
 
     if results:
         lines = [f"🚗 TOGG SİPARİŞ BUTONU GÖRÜNDÜ! ({now})", ""]

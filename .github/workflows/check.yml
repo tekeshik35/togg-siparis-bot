@@ -11,6 +11,14 @@ on:
         description: "Deneme mesajı gönderilsin mi?"
         type: boolean
         default: false
+      report_now:
+        description: "Günlük raporu şimdi gönder (deneme için)"
+        type: boolean
+        default: false
+
+permissions:
+  actions: read
+  contents: read
 
 concurrency:
   group: togg-check
@@ -38,4 +46,6 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TEST_MESSAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_message && '1' || '0' }}
+          REPORT_NOW: ${{ github.event_name == 'workflow_dispatch' && inputs.report_now && '1' || '0' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python check.py
