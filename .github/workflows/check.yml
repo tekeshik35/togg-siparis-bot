@@ -2,18 +2,19 @@ name: Togg sipariş kontrolü
 
 on:
   schedule:
-    # Not: Her 10 dakikada bir (GitHub zamanlamayı birkaç dakika geciktirebilir)
-    - cron: "*/10 * * * *"
+    # Asıl tetikleme cron-job.org'dan geliyor (10 dakikada bir workflow_dispatch).
+    # GitHub'ın kendi zamanlaması güvenilmez; sadece yedek olarak duruyor.
+    - cron: "7-59/30 * * * *"
   workflow_dispatch:
     inputs:
       test_message:
         description: "Deneme mesajı gönderilsin mi?"
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: togg-check
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   check:
