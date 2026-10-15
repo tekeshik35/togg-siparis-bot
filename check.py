@@ -225,7 +225,7 @@ def build_report(this_run_ok, this_run_errors):
     ok += 1 if this_run_ok else 0
     failed += 0 if this_run_ok else 1
 
-    expected = 24 * 6  # 10 dakikada bir
+    expected = 24 * 12  # 5 dakikada bir
     now = datetime.now(TR_TZ).strftime("%d.%m.%Y %H:%M")
     lines = [
         f"📊 Togg botu günlük rapor ({now})",
@@ -249,12 +249,12 @@ def build_report(this_run_ok, this_run_errors):
 def should_send_report():
     if os.environ.get("REPORT_NOW") == "1":
         return True
-    # Sadece cron-job.org tetiklemesinde (workflow_dispatch) ve 21:00-21:09 arasında
+    # Sadece cron-job.org tetiklemesinde (workflow_dispatch) ve 21:00-21:04 arasında
     # gönder; GitHub'ın yedek zamanlaması rapor göndermez, böylece rapor tek gelir.
     if os.environ.get("GITHUB_EVENT_NAME") != "workflow_dispatch":
         return False
     t = datetime.now(TR_TZ)
-    return t.hour == REPORT_HOUR and t.minute < 10
+    return t.hour == REPORT_HOUR and t.minute < 5
 
 
 def main():
