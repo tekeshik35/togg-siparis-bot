@@ -15,6 +15,10 @@ on:
         description: "Günlük raporu şimdi gönder (deneme için)"
         type: boolean
         default: false
+      test_text:
+        description: "TEST: sipariş butonu yerine bu yazıyı ara (boş bırakın = normal çalışma)"
+        type: string
+        default: ""
 
 permissions:
   actions: read
@@ -48,4 +52,5 @@ jobs:
           TEST_MESSAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.test_message && '1' || '0' }}
           REPORT_NOW: ${{ github.event_name == 'workflow_dispatch' && inputs.report_now && '1' || '0' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TEST_TEXT: ${{ github.event_name == 'workflow_dispatch' && inputs.test_text || '' }}
         run: python check.py

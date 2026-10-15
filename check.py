@@ -139,7 +139,17 @@ def send(text):
     print("Telegram mesajı gönderildi.")
 
 
+def active_patterns():
+    """Normalde sipariş kalıpları; TEST_TEXT verilmişse sadece o yazı aranır (deneme için)."""
+    test_text = os.environ.get("TEST_TEXT", "").strip()
+    if test_text:
+        low = test_text.replace("I", "ı").replace("İ", "i").lower()
+        return re.escape(low).replace(r"\ ", r"\s+"), r"(?!x)x"
+    return ORDER_RE.pattern, IGNORE_RE.pattern
+
+
 def check_pages():
+    order_pat, ignore_pat = active_patterns()
     results = []
     errors = []
     with sync_playwright() as p:
@@ -163,7 +173,7 @@ def check_pages():
                 # Sonradan eklenen butonlar için bekle
                 page.wait_for_timeout(8000)
                 hits = page.evaluate(
-                    FIND_JS, {"order": ORDER_RE.pattern, "ignore": IGNORE_RE.pattern}
+                    FIND_JS, {"order": order_pat, "ignore": ignore_pat}
                 )
                 print(f"{name}: {len(hits)} eşleşme")
                 for h in hits:
@@ -262,7 +272,10 @@ def main():
             print(f"Rapor gönderilemedi: {e}")
 
     if results:
-        lines = [f"🚗 TOGG SİPARİŞ BUTONU GÖRÜNDÜ! ({now})", ""]
+        test_text = os.environ.get("TEST_TEXT", "").strip()
+        title = (f"🧪 TEST: \"{test_text}\" yazısı bulundu ({now})" if test_text
+                 else f"🚗 TOGG SİPARİŞ BUTONU GÖRÜNDÜ! ({now})")
+        lines = [title, ""]
         for name, url, h in results:
             lines.append(f"• {name}: \"{h['text']}\"")
             if h["href"]:
