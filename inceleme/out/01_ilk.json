@@ -1,0 +1,58 @@
+[
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-vwdyc6",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "T10X"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-pl2lok",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "T10F"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-mnzc0b",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "Versiyonları Karşılaştır"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-mnzc0b",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "Detaylar"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-mnzc0b",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "Detaylar"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-mnzc0b",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "Detaylar"
+ },
+ {
+  "tag": "BUTTON",
+  "cls": "chakra-button css-dnb3xe",
+  "checked": null,
+  "aria": null,
+  "type": "button",
+  "text": "Özeti Göster"
+ }
+]
