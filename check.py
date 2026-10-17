@@ -282,9 +282,25 @@ def main():
                 lines.append(f"  Link: {h['href']}")
         lines += [
             "",
-            "Hemen Trumore'dan kontrol edin: T10F V2 RWD Uzun Menzil.",
-            "Ekleri seçmeyin (ÖTV %25'ten %55'e çıkıyor).",
-            "Sayfa: https://www.togg.com.tr/",
+            "📱 Trumore'u aç: https://apps.apple.com/tr/app/trumore/id1610978415",
+            "",
+            "✅ SİPARİŞ KONTROL LİSTESİ (T10F)",
+            "1. Versiyon: V2 RWD Uzun Menzil (4More DEĞİL)",
+            "2. Paketler: Kış Paketi ✔ + Akıllı Destek Paketi ✔",
+            "3. Renk: önceden seçtiğin renk",
+            "4. Jant: 19\" (ücretsiz)",
+            "5. Koltuk: krem deri SEÇME",
+            "6. Donanım: SADECE Panoramik Cam Tavan ✔",
+            "   (Meridian ✘, Siyah tavan/ayna ✘)",
+            "7. ÖZETİ KONTROL ET:",
+            "   • ÖTV Oranı: %25 olmalı",
+            "   • Toplam: ~2.480.930 TL",
+            "   %55 görürsen bir eki çıkar!",
+            "8. Ön ödeme: 150.000 TL (cüzdan/kart hazır)",
+            "",
+            "⚠️ Akıllı Destek listede yoksa: onsuz devam et",
+            "(cam tavan + kış = ~2.450.930 TL, ÖTV %25).",
+            "Yerine Meridian eklersen ÖTV'yi mutlaka kontrol et, sınırda.",
         ]
         send("\n".join(lines))
     else:
