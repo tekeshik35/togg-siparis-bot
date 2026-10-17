@@ -3,7 +3,7 @@ ekran sırasını, seçenekleri ve seçili durumları inspect/out/ altına yazar
 import json, os, re
 from playwright.sync_api import sync_playwright
 
-OUT = "inspect/out"
+OUT = "inceleme/out"
 os.makedirs(OUT, exist_ok=True)
 
 DUMP_JS = r"""

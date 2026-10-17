@@ -3,7 +3,7 @@ name: Konfigüratör inceleme (tek seferlik)
 on:
   push:
     branches: [main]
-    paths: ["inspect/inspect.py", "inspect/run.txt"]
+    paths: ["inceleme/konfig_inceleme.py", "inceleme/run.txt"]
   workflow_dispatch:
 
 permissions:
@@ -22,12 +22,13 @@ jobs:
       - run: |
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
-      - run: python inspect/inspect.py
+      - run: python inceleme/konfig_inceleme.py
         continue-on-error: true
       - name: Sonuçları kaydet
         run: |
           git config user.name "togg-bot"
           git config user.email "togg-bot@users.noreply.github.com"
-          git add inspect/out
+          mkdir -p inceleme/out && touch inceleme/out/.keep
+          git add inceleme/out
           git commit -m "Konfigüratör inceleme çıktısı" || echo "değişiklik yok"
           git push
