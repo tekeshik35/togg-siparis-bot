@@ -1,0 +1,29 @@
+name: Site inceleme (tek seferlik)
+on:
+  push:
+    branches: [main]
+    paths: ["inceleme/konfig_inceleme.py", "inceleme/run.txt"]
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - run: python inceleme/konfig_inceleme.py
+        continue-on-error: true
+      - run: |
+          git config user.name "togg-bot"
+          git config user.email "togg-bot@users.noreply.github.com"
+          mkdir -p inceleme/out2 && touch inceleme/out2/.keep
+          git add inceleme/out2
+          git commit -m "Site inceleme çıktısı" || echo "değişiklik yok"
+          git pull --rebase && git push
