@@ -1,10 +1,6 @@
 name: Togg sipariş kontrolü
 
 on:
-  schedule:
-    # Asıl tetikleme cron-job.org'dan geliyor (5 dakikada bir workflow_dispatch).
-    # GitHub'ın kendi zamanlaması güvenilmez; sadece yedek olarak duruyor.
-    - cron: "7-59/30 * * * *"
   workflow_dispatch:
     inputs:
       test_message:
@@ -30,6 +26,8 @@ concurrency:
 
 jobs:
   check:
+    # Bot kapatıldı (sipariş verildi, 22.10.2026). Tekrar açmak için bu satırı silin.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
